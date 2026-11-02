@@ -1,0 +1,75 @@
+Practical 5 updown counter
+
+
+
+module sync_updown_counter(
+    input clk,
+    input reset,
+    input mode,
+    output reg [2:0] count
+);
+
+always @(posedge clk or negedge reset)
+begin
+    if (!reset)
+        count <= 3'b000;
+
+    else if (mode == 1'b0)
+        count <= count + 1'b1;
+
+    else
+        count <= count - 1'b1;
+end
+
+endmodule
+
+module sync_updown_counter_tb;
+
+reg clk, reset, mode;
+wire [2:0] count;
+
+// Instantiate DUT
+sync_updown_counter uut (
+    .clk(clk),
+    .reset(reset),
+    .mode(mode),
+    .count(count)
+);
+
+// Clock Generation
+always #5 clk = ~clk;
+
+initial begin
+
+    $monitor("Time=%0t Reset=%b Mode=%b Count=%b",
+              $time, reset, mode, count);
+
+    // Initialize
+    clk = 0;
+    reset = 0;
+    mode = 0;
+
+    // Apply Reset
+    #10 reset = 1;
+
+    // UP Counter
+    mode = 0;
+    #80;
+
+    // DOWN Counter
+    mode = 1;
+    #80;
+
+    // Reset Again
+    reset = 0;
+    #10 reset = 1;
+
+    // UP Counter Again
+    mode = 0;
+    #40;
+
+    $finish;
+
+end
+
+endmodule

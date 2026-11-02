@@ -1,0 +1,61 @@
+Practical 6 johnson
+
+
+
+module johnson_counter(
+    input clk,
+    input reset,
+    output reg [3:0] q
+);
+
+always @(posedge clk or posedge reset)
+begin
+    if (reset)
+        q <= 4'b0000;
+    else
+        q <= {q[2:0], ~q[3]};
+end
+
+endmodule
+
+module johnson_counter_tb;
+
+reg clk;
+reg reset;
+wire [3:0] q;
+
+// Instantiate DUT
+johnson_counter uut(
+    .clk(clk),
+    .reset(reset),
+    .q(q)
+);
+
+// Clock generation
+initial
+begin
+    clk = 0;
+    forever #5 clk = ~clk;
+end
+
+// Test sequence
+initial
+begin
+    reset = 1;
+    #10;
+
+    reset = 0;
+
+    #100;
+
+    $finish;
+end
+
+// Monitor output
+initial
+begin
+    $monitor("Time=%0t | Reset=%b | Q=%b", 
+              $time, reset, q);
+end
+
+endmodule

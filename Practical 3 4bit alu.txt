@@ -1,0 +1,83 @@
+Practical 3 4bit alu
+
+
+module alu_4bit(
+    input [3:0] A,
+    input [3:0] B,
+    input [3:0] sel,
+    output [3:0] Result,
+    output Carry
+);
+
+wire [4:0] temp;
+
+assign temp =
+    (sel == 4'b0000) ? {1'b0, A+B} :
+    (sel == 4'b0001) ? {1'b0, A-B} :
+    (sel == 4'b0010) ? {1'b0, A&B} :
+    (sel == 4'b0011) ? {1'b0, A|B} :
+    (sel == 4'b0100) ? {1'b0, A^B} :
+    (sel == 4'b0101) ? {1'b0, ~(A&B)} :
+    (sel == 4'b0110) ? {1'b0, ~(A|B)} :
+    (sel == 4'b0111) ? {1'b0, ~(A^B)} :
+    (sel == 4'b1000) ? {1'b0, A} :
+    (sel == 4'b1001) ? {1'b0, B} :
+    (sel == 4'b1010) ? {1'b0, A+1'b1} :
+    (sel == 4'b1011) ? {1'b0, A-1'b1} :
+    (sel == 4'b1100) ? {1'b0, A<<1} :
+    (sel == 4'b1101) ? {1'b0, A>>1} :
+    (sel == 4'b1110) ? {1'b0, B+1'b1} :
+    (sel == 4'b1111) ? {1'b0, B>>1} :
+    5'b00000;
+
+assign Result = temp[3:0];
+assign Carry = temp[4];
+
+endmodule
+
+module alu_4bit_tb;
+
+reg [3:0] A, B;
+reg [3:0] sel;
+
+wire [3:0] Result;
+wire Carry;
+
+alu_4bit uut(
+    .A(A),
+    .B(B),
+    .sel(sel),
+    .Result(Result),
+    .Carry(Carry)
+);
+
+initial begin
+
+    $monitor("A=%b B=%b sel=%b | Result=%b Carry=%b",
+              A, B, sel, Result, Carry);
+
+    A = 4'b1101;
+    B = 4'b0011;
+
+    sel = 4'b0000; #10;
+    sel = 4'b0001; #10;
+    sel = 4'b0010; #10;
+    sel = 4'b0011; #10;
+    sel = 4'b0100; #10;
+    sel = 4'b0101; #10;
+    sel = 4'b0110; #10;
+    sel = 4'b0111; #10;
+    sel = 4'b1000; #10;
+    sel = 4'b1001; #10;
+    sel = 4'b1010; #10;
+    sel = 4'b1011; #10;
+    sel = 4'b1100; #10;
+    sel = 4'b1101; #10;
+    sel = 4'b1110; #10;
+    sel = 4'b1111; #10;
+
+    $finish;
+
+end
+
+endmodule

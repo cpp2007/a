@@ -1,0 +1,63 @@
+Practical 4  t ff
+
+
+module t_ff(
+    input T,
+    input clk,
+    input reset,
+    output reg Q
+);
+
+always @(posedge clk or posedge reset)
+begin
+    if(reset)
+        Q <= 1'b0;
+    else
+    begin
+        if(T == 1'b0)
+            Q <= Q;
+        else
+            Q <= ~Q;
+    end
+end
+
+endmodule
+
+
+module t_ff_tb;
+
+reg T, clk, reset;
+wire Q;
+
+t_ff uut(
+    .T(T),
+    .clk(clk),
+    .reset(reset),
+    .Q(Q)
+);
+
+// Clock generation
+always #5 clk = ~clk;
+
+initial begin
+
+    $monitor("Time=%0t T=%b Reset=%b Q=%b",
+              $time, T, reset, Q);
+
+    clk = 0;
+    reset = 1;
+    T = 0;
+
+    #10 reset = 0;
+
+    T=0; #10;
+    T=1; #10;
+    T=1; #10;
+    T=0; #10;
+    T=1; #10;
+
+    #10 $finish;
+
+end
+
+endmodule
